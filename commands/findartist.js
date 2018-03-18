@@ -1,20 +1,20 @@
 var _ = require('lodash');
 
 module.exports = {
-  name: 'findalbum',
-  trigger: '.findalbum',
-  handler: findalbum
+  name: 'findartist',
+  trigger: '.findartist',
+  handler: findartist
 };
 
 const config = {
   MAX_RESULTS: 5
 };
 
-async function findalbum(message, db) {
+async function findartist(message, db) {
   const query = message.split(' ').splice(1).join(' ');
   try {
     const result = await db.query(
-      'SELECT * FROM rateify.find_album($1)',
+      'SELECT * FROM rateify.find_artist($1)',
       [query]
     );
     let response = null;
@@ -24,7 +24,7 @@ async function findalbum(message, db) {
         ? ` You should refine your search. Here are ${config.MAX_RESULTS} results: \n`
         : ' Here are all of them: \n';
       _.forEach(_.take(result.rows, config.MAX_RESULTS), (row) => {
-        response += `${row.id} \t\t (${row.release_year}) ${row.artist_name} - ${row.album_name} (${row.rating} stars) \n`;
+        response += `${row.id} \t\t ${row.artist_name} \n`;
       });
     } else {
       response = 'I found no results. Try something else.';

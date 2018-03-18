@@ -19,14 +19,13 @@ async function findtrack(message, db) {
     );
     let response = null;
     if (!_.isEmpty(result.rows)) {
-      response = 'I found ' + result.rows.length + ' results.';
+      response = `I found ${result.rows.length} results.`;
       response += result.rows.length > config.MAX_RESULTS
-        ? ' You should refine your search. Here are ' + config.MAX_RESULTS + ' results: \n'
+        ? ` You should refine your search. Here are ${config.MAX_RESULTS} results: \n`
         : ' Here are all of them: \n';
       _.forEach(_.take(result.rows, config.MAX_RESULTS), (row) => {
-        response += row.id + '\t\t' +
-          row.track_name + ' (' + row.rating + ' stars)\n' +
-          row.artist_name + ' - ' + row.album_name + '\n';
+        response += `${row.id} \t\t ${row.track_name} (${row.rating} stars)
+          ${row.artist_name} - ${row.album_name} \n`;
       });
     } else {
       response = 'I found no results. Try something else.';

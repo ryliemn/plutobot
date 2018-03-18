@@ -1,4 +1,5 @@
-CREATE OR REPLACE FUNCTION rateify.find_track(
+DROP FUNCTION IF EXISTS rateify.find_track(VARCHAR(512));
+CREATE rateify.find_track(
   query VARCHAR(512)
 ) RETURNS TABLE(
   id INTEGER,
