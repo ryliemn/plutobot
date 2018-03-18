@@ -4,6 +4,6 @@ module.exports = {
   handler: goodboy
 };
 
-async function goodboy(message, db) {
+async function goodboy(message) {
   return 'Arfff';
 }

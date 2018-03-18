@@ -1,13 +1,10 @@
 var _ = require('lodash');
-var { Client } = require('pg');
 var Discord = require('discord.io');
 var fs = require('fs');
 var logger = require('winston');
 var path = require('path');
 
 var auth = require('./auth.json');
-
-var client = new Client(auth.db);
 
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -42,7 +39,7 @@ async function pluto(user, userID, channelID, message, evt) {
 
   if (command) {
     logger.info(`Executing ${command.name} command`);
-    const response = await command.handler(message, client);
+    const response = await command.handler(message);
     bot.sendMessage({
       to: channelID,
       message: response
@@ -58,5 +55,3 @@ bot.on('ready', function (evt) {
   logger.info(bot.username + ' - (' + bot.id + ')');
 });
 bot.on('message', pluto);
-
-client.connect();

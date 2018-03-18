@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var { dbConnector } = require('../db');
 
 module.exports = {
   name: 'findartist',
@@ -10,14 +11,16 @@ const config = {
   MAX_RESULTS: 5
 };
 
-async function findartist(message, db) {
+async function findartist(message) {
+  const db = dbConnector();
+  db.connect();
   const query = message.split(' ').splice(1).join(' ');
+  let response = null;
   try {
     const result = await db.query(
       'SELECT * FROM rateify.find_artist($1)',
       [query]
     );
-    let response = null;
     if (!_.isEmpty(result.rows)) {
       response = `I found ${result.rows.length} results.`;
       response += result.rows.length > config.MAX_RESULTS
@@ -29,8 +32,9 @@ async function findartist(message, db) {
     } else {
       response = 'I found no results. Try something else.';
     }
-    return response;
   } catch (err) {
-    return err.stack;
+    response = err.stack;
   }
+  db.end();
+  return response;
 }

@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var { dbConnector } = require('../db');
 
 module.exports = {
   name: 'findtrack',
@@ -10,14 +11,16 @@ const config = {
   MAX_RESULTS: 5
 };
 
-async function findtrack(message, db) {
+async function findtrack(message) {
+  const db = dbConnector();
+  db.connect();
   const query = message.split(' ').splice(1).join(' ');
+  let response = null;
   try {
     const result = await db.query(
       'SELECT * FROM rateify.find_track($1)',
       [query]
     );
-    let response = null;
     if (!_.isEmpty(result.rows)) {
       response = `I found ${result.rows.length} results.`;
       response += result.rows.length > config.MAX_RESULTS
@@ -30,8 +33,9 @@ async function findtrack(message, db) {
     } else {
       response = 'I found no results. Try something else.';
     }
-    return response;
   } catch (err) {
-    return err.stack;
+    response = err.stack;
   }
+  db.end();
+  return response;
 }
