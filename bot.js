@@ -42,7 +42,7 @@ async function pluto(user, userID, channelID, message, evt) {
     const response = await command.handler(message);
     bot.sendMessage({
       to: channelID,
-      message: response
+      message: '```' + response + '```'
     });
   }
 }
