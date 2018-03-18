@@ -1,0 +1,11 @@
+{
+    "name": "plutobot",
+    "version": "1.0.0",
+    "description": "He's a good boy",
+    "main": "bot.js",
+    "author": "Rylie Nelson",
+    "dependencies": {
+        "discord.io": "github:woor/discord.io#gateway_v6",
+        "winston": "^2.4.0"
+    }
+}
