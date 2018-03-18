@@ -1,39 +1,62 @@
+var _ = require('lodash');
+var { Client } = require('pg');
 var Discord = require('discord.io');
+var fs = require('fs');
 var logger = require('winston');
+var path = require('path');
+
 var auth = require('./auth.json');
-// Configure logger settings
+
+var client = new Client(auth.db);
+
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
-    colorize: true
+  colorize: true
 });
 logger.level = 'debug';
-// Initialize Discord Bot
+
 var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
+  token: auth.token,
+  autorun: true
 });
+
+const commands = [];
+
+function loadCommands() {
+  const commandPath = path.join(__dirname, 'commands');
+  const files = _.filter(fs.readdirSync(commandPath), fileName => _.endsWith(fileName, '.js'));
+
+  _.each(files, (file) => {
+    const command = require(`./commands/${file}`);
+    commands.push(command);
+    logger.info(`Loaded ${command.name}`);
+  });
+}
+
+async function pluto(user, userID, channelID, message, evt) {
+  if (userID === bot.id) return;
+
+  const command = commands.find((c) => {
+    return message.startsWith(c.trigger);
+  });
+
+  if (command) {
+    logger.info(`Executing ${command.name} command`);
+    const response = await command.handler(message, client);
+    bot.sendMessage({
+      to: channelID,
+      message: response
+    });
+  }
+}
+
+loadCommands();
+
 bot.on('ready', function (evt) {
-    logger.info('Connected');
-    logger.info('Logged in as: ');
-    logger.info(bot.username + ' - (' + bot.id + ')');
+  logger.info('Connected');
+  logger.info('Logged in as: ');
+  logger.info(bot.username + ' - (' + bot.id + ')');
 });
-bot.on('message', function (user, userID, channelID, message, evt) {
-    // Our bot needs to know if it will execute a command
-    // It will listen for messages that will start with `!`
-    if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        switch(cmd) {
-            // !ping
-            case 'goodboy':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Arf'
-                });
-            break;
-            // Just add any case commands if you want to..
-         }
-     }
-});
+bot.on('message', pluto);
+
+client.connect();

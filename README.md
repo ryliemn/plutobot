@@ -1,0 +1,1 @@
+Run 'npm run watch', the bot will automatically reload when you save.

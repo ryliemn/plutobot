@@ -6,6 +6,30 @@
     "author": "Rylie Nelson",
     "dependencies": {
         "discord.io": "github:woor/discord.io#gateway_v6",
+        "eslint": "^4.19.0",
+        "lodash": "^4.17.5",
+        "npm-watch": "^0.3.0",
+        "pg": "^7.4.1",
         "winston": "^2.4.0"
+    },
+    "watch": {
+        "start": {
+            "patterns": [
+                "bot.js",
+                "commands"
+            ],
+            "extensions": "js"
+        }
+    },
+    "scripts": {
+        "start": "node bot.js",
+        "watch": "npm-watch"
+    },
+    "devDependencies": {
+        "eslint-config-standard": "^11.0.0",
+        "eslint-plugin-import": "^2.9.0",
+        "eslint-plugin-node": "^6.0.1",
+        "eslint-plugin-promise": "^3.7.0",
+        "eslint-plugin-standard": "^3.0.1"
     }
 }
