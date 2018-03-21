@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var { dbConnector } = require('../db');
 
 module.exports = {
