@@ -7,12 +7,13 @@ SELECT
   al.release_date release_date,
   (
     SELECT
-      round(avg(tr.rating), 1)
+      round(CASE WHEN avg(tr.rating) IS NOT NULL THEN avg(tr.rating) ELSE 0 END, 1)
     FROM
       rateify.track tr
     WHERE
       tr.album_id = al.id
       AND tr.is_filler = FALSE
+      AND tr.rating IS NOT NULL
   ) rating
 FROM
   rateify.album al
